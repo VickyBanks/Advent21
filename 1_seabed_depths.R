@@ -18,3 +18,19 @@ depths %>%
 
 ## 1681 are larger
 ## 318 are smaller
+
+## Task 2
+## use three measurements to find a total and find if that value is increasing
+depths %>%
+  mutate(depth_2 = lead(Depths),
+         depth_3 = lead(depth_2),
+         total = Depths + depth_2 + depth_3
+         )%>%
+  mutate(comp = case_when(total > lag(total) ~ "larger",
+                          total < lag(total)  ~ "smaller",
+                          total == lag(total)  ~ "same"
+         ))%>%
+  group_by(comp)%>%
+  count()
+## 1704 are larger
+## 265 are smaller
