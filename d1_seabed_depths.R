@@ -5,7 +5,7 @@ library(readr)
 
 ## Task one
 ## how many depths are larger than the previous depth
-depths <- read_csv("1_seabed_depths.csv")
+depths <- read_csv("d1_seabed_depths.csv")
 depths%>%head()
 
 depths %>%
