@@ -28,7 +28,7 @@ horiz*depth # 1,654,760
 
 
 ## Task 2 - find the position given that the meaning of the commands has changed
-#forward still moves horizontally but also increases your aim by aim * forward value
+#forward still moves horizontally but also increases your depth by aim * forward value
 
 motion<-
   motion %>%
