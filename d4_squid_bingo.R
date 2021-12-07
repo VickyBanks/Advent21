@@ -123,11 +123,7 @@ for (num in 1:nrow(num_called)) {
   
   
   ## 3. keep running through each number called until the final item hits bingo
-  ##spot when it first appears
-  if (length(bingo_card_list) == 1){
-    print(paste0("the loser is ", bingo_card_list %>% names()))
-    print(bingo_card_list[[1]])
-  }
+
   ## 4. if the final item finally hit bingo
   if (length(bingo_card_list) == 1 &
       (!is.na(match(0, colSums(bingo_card_list[[1]]))) ||
@@ -139,7 +135,7 @@ for (num in 1:nrow(num_called)) {
         losing_board<-bingo_card_list[[1]]
         break
   }
-  #if(length(bingo_card_list) <=5){break}
+
 }
 
 
