@@ -15,7 +15,7 @@ num_called%>%head()
 
 bingo_cards<- read_csv("d4_squid_bingo_cards.csv")
 
-#test data
+# #test data
 # bingo_cards<- data.frame(bingo_card = c("22 13 17 11  0",
 #                                          "8  2 23  4 24",
 #                                          "21  9 14 16  7",
