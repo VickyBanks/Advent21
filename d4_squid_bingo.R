@@ -33,7 +33,7 @@ bingo_cards<- read_csv("d4_squid_bingo_cards.csv")
 #                                          "2  0 12  3  7"))
 bingo_cards%>%head()
 
-########## clean card data and split into cards ##########
+#################### clean card data and split into cards #################### 
 bingo_cards$bingo_card<-gsub("  "," ",bingo_cards$bingo_card) #remove any double spaces for single digits
 
 bingo_cards<-bingo_cards%>%
@@ -56,7 +56,7 @@ while(card_num<=num_cards){
   card_num = card_num+1
 }
 rm(card, end_row,card_num, num_cards, start_row)
-########################################
+################################################################################
 
 ## get the list of cards
 bingo_card_names <- card_names #ls()[grepl("card", ls())]
@@ -69,88 +69,72 @@ names(bingo_card_list) <- bingo_card_names
 bingo_card_list%>%length()
 
 
-## functions to alter value to 0 if it's called
-remove_num_called<-function(card, num_called ){
-  card[card==num_called]<-0
-  return(card)
-}
-
-
-## function to check if bingo is met by looking for a row or column with the sum = 0
-check_bingo_win <- function(card, card_name) {
-  if (!is.na(match(0, colSums(card))) ||
-      !is.na(match(0, rowSums(card)))) {
-    print("bingo!")
-    print(card_name)
-    print(card)
-    winning_board <<- card
-    break
+######################## Functions ########################################################
+## functions to alter value to NA if it's called
+remove_num_called <- function(bingo_card_list, num_called) {
+  for (card_num in 1:length(bingo_card_list)) {
+    ## change the value and replace the card in the list
+    current_card <- bingo_card_list[[card_num]]
+    current_card[current_card == num_called] <- NA
+    bingo_card_list[[card_num]] <- current_card
   }
-}
-##if looking for the loosing board, remove each one as it wins
-check_bingo_lose <- function(bingo_card_list) {
-  cards_to_remove <- c()
-  for (card in 1:length(bingo_card_list)) {
-    if (!is.na(match(0,colSums(bingo_card_list[[card]]))) ##if one col sum = 0
-        || #or
-        !is.na(match(0, rowSums(bingo_card_list[[card]]))) # one row sum = 0
-        ) {
-      card_index = card #the item in the list to remove i.e. item 5
-      cards_to_remove <- cards_to_remove %>% append(card_index)
-    }
-  }
-  
-  ## if any cards got bingo this round, remove them, unless this is the last card
-  if (length(cards_to_remove) > 0 & length(bingo_card_list) > 1) {
-    bingo_card_list <- bingo_card_list[-cards_to_remove]
-  } 
   return(bingo_card_list)
 }
+# current_card<-bingo_card_list[[1]]
+# current_card[current_card == 7]<- NA
+# bingo_card_list[[1]] <- current_card
 
-
-##loop over each number called for each df, cross out the value if found, then check for bingo
-for (num in 1:nrow(num_called)) {
-  #print(paste0("number called =", num_called$num_called[num] ))
-  
-  ##1. remove every the number called across each card
-  for (card in 1:length(bingo_card_list)) {
-    bingo_card_list[[card]] <-
-      remove_num_called(bingo_card_list[[card]], num_called$num_called[num])
-  }
-  
-  ## 2. remove all the bingos from this turn
-  bingo_card_list <- check_bingo_lose(bingo_card_list)
-  
-  
-  ## 3. keep running through each number called until the final item hits bingo
-
-  ## 4. if the final item finally hit bingo
-  if (length(bingo_card_list) == 1 &
-      (!is.na(match(0, colSums(bingo_card_list[[1]]))) ||
-       !is.na(match(0, rowSums(bingo_card_list[[1]])))
-       )) {
-        print(paste0("the loser is ", bingo_card_list %>% names()))
-        print(bingo_card_list[[1]])
+## function to check if bingo is met by looking for a row or column with one row/col entirely NA values
+check_bingo <- function(bingo_card_list, num) {
+  for (card_num in 1:length(bingo_card_list)) {
+    ##check if one row/col is entire NA
+    row_check <- rowSums(is.na(bingo_card_list[[card_num]]))
+    col_check <- colSums(is.na(bingo_card_list[[card_num]]))
+    
+    ## if a row or column is NA it's hit bingo
+    if (5 %in% row_check || 5 %in% col_check) {
+      #If it's not already registered put in the list
+      if (!card_num %in% completed_card_list) {
+        next_item_index <- length(bingo_cards_completed) + 1
         
-        losing_board<-bingo_card_list[[1]]
-        break
+        bingo_cards_completed[[next_item_index]] <<-bingo_card_list[[card_num]]
+        completed_card_list[next_item_index] <<- card_num
+        bingo_number[[next_item_index]] <<- num
+      }
+    }
+    
   }
-
+  return()
 }
 
 
-### winning score
-# board_sum<-Reduce("+",winning_board%>%colSums())
-# 
-# winning_score<- num_called$num_called[num] * board_sum
-# winning_score #55770
-# 
+################################# Find bingo ###############################################
 
-### losing board
-board_sum<-Reduce("+",losing_board%>%colSums())
-board_sum
-final_num<-num_called$num_called[num]
-final_num
-losing_score<- num_called$num_called[num] * board_sum
-losing_score #6840
+bingo_cards_completed = list()
+completed_card_list = list()
+bingo_number = list()
+
+## run through each card looking for bingo
+for (num in 1:nrow(num_called)) { 
+  
+  bingo_card_list <<- remove_num_called(bingo_card_list,num_called$num_called[num])
+  check_bingo(bingo_card_list, num_called$num_called[num])
+  
+}
+
+
+### Winning Board
+print(paste0())
+print(paste0("winning board = ", completed_card_list[1]))
+print(paste0("winning number called = ", bingo_number[1]))
+print(paste0("card total = " ,bingo_cards_completed[[1]]%>%sum(na.rm=TRUE)))
+print(paste0("winning score = ",bingo_cards_completed[[1]]%>%sum(na.rm=TRUE)*bingo_number[[1]]))
+
+
+### losing Board
+print(paste0())
+print(paste0("losing board = ", completed_card_list[100]))
+print(paste0("losing number called = ", bingo_number[100]))
+print(paste0("card total = " ,bingo_cards_completed[[100]]%>%sum(na.rm=TRUE)))
+print(paste0("losing score = ",bingo_cards_completed[[100]]%>%sum(na.rm=TRUE)*bingo_number[[100]]))
 
