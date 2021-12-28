@@ -27,7 +27,8 @@ for(align_position in min_pos:max_pos) {
   for (crab in 1:nrow(crabs)) {
     
     moves<-abs(crabs$position[crab] - align_position)
-    fuel_used <- 0.5*(moves*moves + moves)
+    fuel_used <- moves ## for part 1
+    #fuel_used <- 0.5*(moves*moves + moves) ## for part 2
     fuel_total <- fuel_total + fuel_used
   }
   ##put in df
@@ -38,6 +39,10 @@ for(align_position in min_pos:max_pos) {
 
 ## which positions gives smallest fuel?
 fuel_total_per_pos %>%filter(fuel == min(fuel_total_per_pos$fuel))
+
+## part 1
+# position      fuel
+#    342       351901
 
 ## part 2
 # position      fuel
