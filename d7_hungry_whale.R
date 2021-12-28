@@ -39,4 +39,7 @@ for(align_position in min_pos:max_pos) {
 ## which positions gives smallest fuel?
 fuel_total_per_pos %>%filter(fuel == min(fuel_total_per_pos$fuel))
 
+## part 2
+# position      fuel
+#    478       101079875
 
