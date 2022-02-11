@@ -4,13 +4,13 @@ library(tidyverse)
 library(readr)
 
 ############ Read in data and prep ##############
-# data<-data.frame(
-#   V1 = c(2199943210,
-#              3987894921,
-#              9856789892,
-#              8767896789,
-#              9899965678)
-# )
+data<-data.frame(
+  V1 = c(2199943210,
+             3987894921,
+             9856789892,
+             8767896789,
+             9899965678)
+)
 data<-read.delim("d9_smoke_basin.txt", header = FALSE,  colClasses = "character")
 data%>%head()
 
